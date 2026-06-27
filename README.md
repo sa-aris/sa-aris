@@ -167,10 +167,6 @@ böylece burada otomatik olarak görünür.
 <!-- ====================== FOOTER ====================== -->
 <div align="center">
 
-<br/>
-
-<img src="https://komarev.com/ghpvc/?username=sa-aris&label=Profile%20Views&color=58A6FF&style=flat-square" alt="Profile views" />
-
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=120&section=footer&v=2" width="100%" />
 
 </div>
