@@ -1,9 +1,14 @@
-name: Generate Snake Animation
+name: Profile Figures
+
+# Renders every generated image the profile README embeds and publishes them
+# to the `output` branch: the live science figures (scripts/build_live.py)
+# and the contribution snake. The live figures run first so an API failure
+# stops the job before publishing, leaving the previous images online.
 
 on:
   # Run automatically every 12 hours
   schedule:
-    - cron: "0 */12 * * *"
+    - cron: "17 */12 * * *"
   # Allow manual runs from the Actions tab
   workflow_dispatch:
   # Run on every push to the default branch
@@ -11,13 +16,30 @@ on:
     branches:
       - main
 
+concurrency:
+  group: profile-figures
+  cancel-in-progress: true
+
 jobs:
   generate:
     permissions:
       contents: write
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
+      - name: Check out the renderer scripts
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Render live figures (activity raster, language spectrum, project cards)
+        run: python scripts/build_live.py --login "${{ github.repository_owner }}" --out dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Generate snake animation from the contribution graph
         uses: Platane/snk/svg-only@v3
         with:

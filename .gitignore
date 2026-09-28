@@ -1,0 +1,3 @@
+# Local renders of the live figures (the workflow publishes them to the output branch)
+dist/
+__pycache__/
