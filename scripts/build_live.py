@@ -33,6 +33,7 @@ from pathlib import Path
 from svgkit import MONO, PALETTES, SANS, SERIF, Rng, document, esc, fmt, points_to_path, text_width, wrap
 
 PINNED = ["aithena", "Context-Bridge", "idiolect", "cpp-rpg-inventory-system"]
+MIN_LANGUAGE_SHARE = 0.005
 
 QUERY = """
 query($login: String!) {
@@ -405,8 +406,9 @@ def languages(user: dict, exclude: str) -> list[tuple[str, str, float]]:
             sizes[name] = sizes.get(name, 0) + edge["size"]
             colours[name] = edge["node"]["color"] or "#8b949e"
     total = sum(sizes.values()) or 1
-    ranked = sorted(sizes.items(), key=lambda kv: -kv[1])
-    return [(name, colours[name], size / total) for name, size in ranked[:8]]
+    ranked = [(name, colours[name], size / total) for name, size in sorted(sizes.items(), key=lambda kv: -kv[1])]
+    # Trace languages (a Dockerfile, a template) only add "0.0%" labels; keep the visible lines.
+    return [lang for lang in ranked if lang[2] >= MIN_LANGUAGE_SHARE][:8] or ranked[:1]
 
 
 def spectrum(user: dict, theme: str) -> str:
